@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
-@RequestMapping("/user")
+
 public class UserController {
 
     @Autowired
@@ -20,22 +20,22 @@ public class UserController {
     private UserService userService;
 
 
-    @GetMapping()
+    @GetMapping("/admin")
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.findAll());
-        return "user/all_users";
+        return "all_users";
     }
 
     @GetMapping("/new")
     public String showFormAddUser(Model model) {
         model.addAttribute("user", new User());
-        return "user/add_user";
+        return "add_user";
     }
 
-    @PostMapping()
+    @PostMapping(("/user"))
     public String addUser(@ModelAttribute("user") User user) {
         userService.save(user);
-        return "redirect:/user";
+        return "redirect:/admin";
     }
 
     @GetMapping("/show")
@@ -45,7 +45,7 @@ public class UserController {
             return "redirect:/user";
         } else {
             model.addAttribute("user", user);
-            return "user/selected_user";
+            return "selected_user";
         }
     }
 
@@ -65,5 +65,11 @@ public class UserController {
     public String deleteUser(@ModelAttribute("user") User user, @RequestParam("id") int id) {
         userService.delete(id);
         return "redirect:/user";
+    }
+    @GetMapping("/user/show")
+    public String showUser(@RequestParam("id") Long id, Model model) {
+        User user = userService.findById(id); // Метод для получения пользователя по ID
+        model.addAttribute("user", user);
+        return "user/show"; // Путь к шаблону (Thymeleaf)
     }
 }

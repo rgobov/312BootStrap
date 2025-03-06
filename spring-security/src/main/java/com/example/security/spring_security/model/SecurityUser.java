@@ -1,10 +1,11 @@
-package com.example.security.spring_security.seurity;
+package com.example.security.spring_security.model;
 
-import com.example.security.spring_security.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class SecurityUser implements UserDetails {
 
@@ -16,8 +17,7 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Реализуйте преобразование ролей пользователя в GrantedAuthority
-        return user.getRoles();
+        return getUser().getRoles();
     }
 
     @Override

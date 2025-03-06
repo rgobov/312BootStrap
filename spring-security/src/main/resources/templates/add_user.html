@@ -9,12 +9,12 @@
 
 <form th:method="POST" th:action="@{/user}" th:object="${user}" style="color: blueviolet">
     <label for="first_name">Enter name: </label>
-    <input type="text" th:field="*{firstName}" id="first_name"/>
+    <input type="text" th:field="*{userName}" id="first_name"/>
 
     <br/>
 
     <label for="last_name" >Enter surname: </label>
-    <input type="text" th:field="*{lastName}" id="last_name"/>
+    <input type="text" th:field="*{password}" id="last_name"/>
 
     <br/>
 
