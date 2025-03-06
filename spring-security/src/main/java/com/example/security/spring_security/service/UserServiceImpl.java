@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     RoleRepository roleRepository;
 
+
     @Autowired
     @Lazy
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -64,8 +65,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void update(long id, User updateuser) {
-        updateuser.setId(id);
-        userRepository.save(updateuser);
+        User userFromBase = findById(id);
+        userFromBase.setUserName(updateuser.getUserName());
+        userFromBase.setEmail(updateuser.getEmail());
+        userFromBase.setPassword(bCryptPasswordEncoder.encode(updateuser.getPassword()));
+        if (updateuser.getRoles() != null) {
+            userFromBase.getRoles().clear(); // Очищаем текущие роли
+            userFromBase.getRoles().addAll(updateuser.getRoles()); // Добавляем новые роли
+        }
+        userRepository.save(userFromBase);
     }
 
     @Override

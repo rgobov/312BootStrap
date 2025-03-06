@@ -1,6 +1,6 @@
 package com.example.security.spring_security.seurity;
 
-import com.example.security.spring_security.model.SecurityUser;
+import com.example.security.spring_security.model.PersonDetails;
 import com.example.security.spring_security.model.User;
 import com.example.security.spring_security.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,13 @@ public class CustomsDetailsServise implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUserName(username);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException(username);
-        }
-        return new SecurityUser(user.get());
+         Optional<User> user = userRepository.findByUserName(username);
+         if (user.isEmpty()) {
+             throw new UsernameNotFoundException(username);
+         }
+         return new PersonDetails(user.get());
+
+
     }
 
 

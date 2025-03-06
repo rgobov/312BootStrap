@@ -6,12 +6,12 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/user/update(id=${user.getId()})}" th:object="${user}">
+<form th:method="POST" th:action="@{/update(id=${user.getId()})}" th:object="${user}">
     <label for="name">Enter name: </label>
-    <input type="text" th:field="*{firstName}" id="name"/>
+    <input type="text" th:field="*{userName}" id="name"/>
     <br/>
     <label for="surname">Enter surname: </label>
-    <input type="text" th:field="*{lastName}" id="surname"/>
+    <input type="text" th:field="*{password}" id="surname"/>
     <br/>
     <label for="email">Enter email: </label>
     <input type="text" th:field="*{email}" id="email"/>

@@ -8,8 +8,8 @@
 <body>
 
 <form th:method="POST" th:action="@{/user}" th:object="${user}" style="color: blueviolet">
-    <label for="first_name">Enter name: </label>
-    <input type="text" th:field="*{userName}" id="first_name"/>
+    <label for="userName">Enter name: </label>
+    <input type="text" th:field="*{userName}" id="userName"/>
 
     <br/>
 
@@ -21,7 +21,24 @@
     <label for="email">Enter email: </label>
     <input type="text" th:field="*{email}" id="email"/>
 
+
     <br/>
+    <br/>
+
+    <label for="password">Enter password : </label>
+    <input type="text" th:field="*{password}" id="password"/>
+
+
+    <br/>
+    <br/>
+
+    <label for="role">Enter role: </label>
+    <input type="text" th:field="*{roles}" id="role"/>
+
+
+    <br/>
+
+
 
     <input type="submit" value="Create!"/>
 </form>

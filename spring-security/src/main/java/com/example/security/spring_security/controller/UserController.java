@@ -49,10 +49,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/show/edit")
+    @GetMapping("edit")
     public String editUser(Model model, @RequestParam("id") int id) {
         model.addAttribute("user", userService.findById(id));
-        return "user/edit_user";
+        return "edit_user";
     }
 
     @PostMapping("/update")
@@ -66,10 +66,10 @@ public class UserController {
         userService.delete(id);
         return "redirect:/user";
     }
-    @GetMapping("/user/show")
-    public String showUser(@RequestParam("id") Long id, Model model) {
-        User user = userService.findById(id); // Метод для получения пользователя по ID
-        model.addAttribute("user", user);
-        return "user/show"; // Путь к шаблону (Thymeleaf)
-    }
+//    @GetMapping("user/show")
+//    public String showUser(@RequestParam("id") Long id, Model model) {
+//        User user = userService.findById(id); // Метод для получения пользователя по ID
+//        model.addAttribute("user", user);
+//        return "show"; // Путь к шаблону (Thymeleaf)
+//    }
 }

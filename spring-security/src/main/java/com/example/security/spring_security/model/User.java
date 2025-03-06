@@ -2,7 +2,12 @@ package com.example.security.spring_security.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 
@@ -26,12 +31,14 @@ public class User  {
     @NotEmpty(message = "Enter password")
     private String password;
 
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "usersRole",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles;
 
+    //String nameForRole;
 
     public User() {
     }
@@ -41,6 +48,7 @@ public class User  {
         this.email = email;
         this.password = password;
         this.roles = roles;
+
     }
 
     public long getId() {
@@ -68,9 +76,12 @@ public class User  {
         this.email = email;
     }
 
+
+
     public String getPassword() {
         return password;
     }
+
 
     public void setPassword(String password) {
         this.password = password;
