@@ -48,6 +48,13 @@ public class PersonDetails implements UserDetails {
         return true;// Предполагая, что User имеет метод isEnabled()
     }
 
+    public int getAge(){
+        return user.getAge();
+    }
+    public String getLastName(){
+        return user.getLastName();
+    }
+
     public User getUser() {
         return user;
     }

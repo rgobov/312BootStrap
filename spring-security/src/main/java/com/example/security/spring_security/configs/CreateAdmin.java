@@ -35,13 +35,13 @@ public class CreateAdmin {
                 "Ivan",
                 "ivan@example.com",
                 passwordEncoder.encode("Ivan"), // Кодирование пароля
-                admninroles
+                admninroles,32,"Ivan"
         );
         User user = new User(
                 "Yn",
                 "ivan@example.com",
                 passwordEncoder.encode("Yn"), // Кодирование пароля
-                userroles
+                userroles, 50,"Yn"
         );
 
         userRepository.save(admin);

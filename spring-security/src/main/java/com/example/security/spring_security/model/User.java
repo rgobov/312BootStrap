@@ -30,6 +30,11 @@ public class User  {
     @Column(name = "password")
     @NotEmpty(message = "Enter password")
     private String password;
+    @Column(name = "age")
+    private int age;
+
+    @Column(name = "lastName")
+    private String lastName;
 
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -43,11 +48,14 @@ public class User  {
     public User() {
     }
 
-    public User(String firstName, String email, String password, Set<Role> roles) {
+    public User(String firstName, String email, String password, Set<Role> roles, int age, String lastName) {
         this.userName = firstName;
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.age = age;
+        this.lastName = lastName;
+
 
     }
 
@@ -94,6 +102,14 @@ public class User  {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+    public int getAge() {return age;}
+    public void setAge(int age) {this.age = age;}
 
+    public String getLastName() {
+        return lastName;
+    }
 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }

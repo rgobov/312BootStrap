@@ -22,4 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> existsByEmail(@NotEmpty(message = "Enter email") String email);
 
 
+
 }
