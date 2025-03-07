@@ -39,7 +39,7 @@ public class CreateAdmin {
         );
         User user = new User(
                 "Yn",
-                "ivan@example.com",
+                "Yan@example.com",
                 passwordEncoder.encode("Yn"), // Кодирование пароля
                 userroles, 50,"Yn"
         );

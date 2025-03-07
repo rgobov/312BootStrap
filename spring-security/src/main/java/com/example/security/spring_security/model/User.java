@@ -2,62 +2,60 @@ package com.example.security.spring_security.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
-
 
 @Entity
 @Table(name = "users")
-public class User  {
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
 
-    @Column(name = "userName", unique = true)
+    @Column(name = "firstName")
     @NotEmpty(message = "Enter a name")
-    private String userName;
+    private String firstName;
 
     @Column(name = "email")
     @NotEmpty(message = "Enter email")
     private String email;
 
+    @Column(name = "userName")
+    private String userName;
+
     @Column(name = "password")
     @NotEmpty(message = "Enter password")
     private String password;
+
     @Column(name = "age")
     private int age;
 
     @Column(name = "lastName")
     private String lastName;
 
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "usersRole",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    Set<Role> roles;
+    private Set<Role> roles;
 
-    //String nameForRole;
-
+    // Default constructor
     public User() {
     }
 
+    // Parameterized constructor
     public User(String firstName, String email, String password, Set<Role> roles, int age, String lastName) {
-        this.userName = firstName;
+        this.firstName = firstName;
         this.email = email;
+        this.userName = email; // Set userName to email
         this.password = password;
         this.roles = roles;
         this.age = age;
         this.lastName = lastName;
-
-
     }
+
+    // Getters and Setters
 
     public long getId() {
         return id;
@@ -67,14 +65,13 @@ public class User  {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUserName(String firstName) {
-        this.userName = firstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
-
 
     public String getEmail() {
         return email;
@@ -82,17 +79,41 @@ public class User  {
 
     public void setEmail(String email) {
         this.email = email;
+        this.userName = email; // Synchronize userName with email
     }
 
+    public String getUserName() {
+        return userName;
+    }
 
+    public void setUserName(String userName) {
+        // Do not allow direct modification of userName
+        // It should always be derived from email
+        throw new UnsupportedOperationException("UserName is derived from email and cannot be set directly.");
+    }
 
     public String getPassword() {
         return password;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Set<Role> getRoles() {
@@ -101,15 +122,5 @@ public class User  {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-    public int getAge() {return age;}
-    public void setAge(int age) {this.age = age;}
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 }
