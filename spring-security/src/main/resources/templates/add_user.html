@@ -7,24 +7,29 @@
 <body>
 
 <form th:method="POST" th:action="@{/addUser}" th:object="${user}" style="color: blueviolet">
-    <label for="userName">Enter unique name: </label>
-    <input type="text" th:field="*{userName}" id="userName"/>
+    <label for="firstName">First Name: </label>
+    <input type="text" th:field="*{firstName}" id="firstName"/>
 
     <br/>
 
-    <label for="email">Enter email: </label>
-    <input type="text" th:field="*{email}" id="email"/>
+    <label for="lastName">Last name: </label>
+    <input type="text" th:field="*{lastName}" id="lastName"/>
 
     <br/>
 
     <br/>
 
-    <label for="email">Enter Age: </label>
-    <input type="text" th:field="*{age}" id="email"/>
+    <label for="age"> Age: </label>
+    <input type="text" th:field="*{age}" id="age"/>
 
     <br/>
 
-    <label for="password">Enter password: </label>
+    <label for="email">Email: </label>
+    <input type="password" th:field="*{email}" id="email"/>
+
+    <br/>
+
+    <label for="password">Password: </label>
     <input type="password" th:field="*{password}" id="password"/>
 
     <br/>
