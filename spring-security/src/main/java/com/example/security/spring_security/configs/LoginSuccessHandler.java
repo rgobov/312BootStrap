@@ -37,7 +37,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.sendRedirect("/ordinaruser");
         } else {
             // Если роль не определена, перенаправляем на страницу по умолчанию
-            response.sendRedirect("/user");
+            response.sendRedirect("/ordinaruser");
         }
     }
 }

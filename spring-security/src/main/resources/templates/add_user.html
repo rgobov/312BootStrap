@@ -7,7 +7,7 @@
 <body>
 
 <form th:method="POST" th:action="@{/user}" th:object="${user}" style="color: blueviolet">
-    <label for="userName">Enter name: </label>
+    <label for="userName">Enter unique name: </label>
     <input type="text" th:field="*{userName}" id="userName"/>
 
     <br/>

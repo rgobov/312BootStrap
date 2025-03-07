@@ -12,9 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -53,15 +51,26 @@ public class UserController {
         return "add_user"; // Имя Thymeleaf шаблона
     }
 
-    @PostMapping(("/user"))
+    @PostMapping("/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public String addUser(@ModelAttribute("user") User user,@RequestParam("roles") Set<String> roleNames) {
-        Set<Role> roles = roleNames.stream()
-                .map(roleName -> new Role(roleName)) // Создаем объект Role
-                .collect(Collectors.toSet());
-        userService.save(user);
-        return "redirect:/admin";
+    public String addUser(@ModelAttribute("user") User user, @RequestParam(value = "roles", required = false) Set<String> roleNames) {
+        // Если роли переданы, преобразуем их в объекты Role
+        if (roleNames != null && !roleNames.isEmpty()) {
+            Set<Role> roles = roleNames.stream()
+                    .map(roleName -> roleRepository.findByRoleName(roleName)) // Используем roleRepository
+                    .filter(Optional::isPresent) // Отфильтровываем пустые Optional
+                    .map(Optional::get) // Извлекаем Role из Optional
+                    .collect(Collectors.toSet());
+            user.setRoles(roles); // Устанавливаем роли для пользователя
+        } else {
+            // Если роли не переданы, устанавливаем пустой набор ролей
+            user.setRoles(Set.of());
+        }
+
+        userService.save(user); // Сохраняем пользователя
+        return "redirect:/admin"; // Перенаправляем на страницу админа
     }
+
 
     @GetMapping("/show")
     @PreAuthorize("hasRole('ADMIN')")
