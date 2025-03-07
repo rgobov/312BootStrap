@@ -53,18 +53,19 @@ public class UserController {
 
     @PostMapping("/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public String addUser(@ModelAttribute("user") User user, @RequestParam(value = "roles", required = false) Set<String> roleNames) {
-        // Если роли переданы, преобразуем их в объекты Role
-        if (roleNames != null && !roleNames.isEmpty()) {
-            Set<Role> roles = roleNames.stream()
-                    .map(roleName -> roleRepository.findByRoleName(roleName)) // Используем roleRepository
+    public String addUser(
+            @ModelAttribute("user") User user,
+            @RequestParam(value = "roles", required = false) Set<Integer> roleIds // Принимаем ID ролей
+    ) {
+        if (roleIds != null && !roleIds.isEmpty()) {
+            Set<Role> roles = roleIds.stream()
+                    .map(id -> roleRepository.findById(Long.valueOf(id))) // Ищем роли по ID
                     .filter(Optional::isPresent) // Отфильтровываем пустые Optional
                     .map(Optional::get) // Извлекаем Role из Optional
                     .collect(Collectors.toSet());
             user.setRoles(roles); // Устанавливаем роли для пользователя
         } else {
-            // Если роли не переданы, устанавливаем пустой набор ролей
-            user.setRoles(Set.of());
+            user.setRoles(Set.of()); // Если роли не переданы, устанавливаем пустой набор
         }
 
         userService.save(user); // Сохраняем пользователя
