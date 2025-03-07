@@ -12,21 +12,21 @@
             <th>Id</th>
             <th>Name</th>
             <th>LastName</th>
-            <th>Password</th>
+            <th>Age</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Age</th>
+
         </tr>
         </thead>
         <tbody>
         <tr th:each="user : ${users}">
             <td th:text="${user.getId()}"></td>
-            <td th:text="${user.getUserName()}"></td>
+            <td th:text="${user.getFirstName()}"></td>
             <td th:text="${user.getLastName()}"></td>
-            <td th:text="${user.getPassword()}"></td>
+            <td th:text="${user.getAge()}"></td>
             <td th:text="${user.getEmail()}"></td>
             <td th:text="${user.getRoles()}"></td>
-            <td th:text="${user.getAge()}"></td>
+
         </tr>
         </tbody>
     </table>
