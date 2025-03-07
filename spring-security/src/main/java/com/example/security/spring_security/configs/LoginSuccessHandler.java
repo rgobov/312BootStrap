@@ -34,10 +34,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (isAdmin) {
             response.sendRedirect("/admin");
         } else if (isUser) {
-            response.sendRedirect("/ordinaruser");
+            response.sendRedirect("/user");
         } else {
             // Если роль не определена, перенаправляем на страницу по умолчанию
-            response.sendRedirect("/ordinaruser");
+            response.sendRedirect("/user");
         }
     }
 }

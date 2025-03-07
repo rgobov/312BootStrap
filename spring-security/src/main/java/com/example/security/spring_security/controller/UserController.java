@@ -51,7 +51,7 @@ public class UserController {
         return "add_user"; // Имя Thymeleaf шаблона
     }
 
-    @PostMapping("/user")
+    @PostMapping("/addUser")
     @PreAuthorize("hasRole('ADMIN')")
     public String addUser(
             @ModelAttribute("user") User user,
@@ -103,15 +103,15 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteUser(@ModelAttribute("user") User user, @RequestParam("id") int id) {
         userService.delete(id);
-        return "redirect:/user";
+        return "redirect:/affterDelite";
     }
-    @GetMapping("/user")
+    @GetMapping("/affterDelite")
     @PreAuthorize("hasRole('ADMIN')")
     public String affterDelite(Model model) {
         model.addAttribute("users", userService.findAll());
         return "all_users";
     }
-    @GetMapping("/ordinaruser")
+    @GetMapping("/user")
     public String ordinarUser(Model model) {
         UserDetails userDetails =
                 (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

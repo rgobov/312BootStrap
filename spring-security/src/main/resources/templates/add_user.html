@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/user}" th:object="${user}" style="color: blueviolet">
+<form th:method="POST" th:action="@{/addUser}" th:object="${user}" style="color: blueviolet">
     <label for="userName">Enter unique name: </label>
     <input type="text" th:field="*{userName}" id="userName"/>
 
