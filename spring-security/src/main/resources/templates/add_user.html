@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>New User</title>
@@ -13,35 +12,29 @@
 
     <br/>
 
-    <label for="last_name" >Enter surname: </label>
-    <input type="text" th:field="*{password}" id="last_name"/>
-
-    <br/>
-
     <label for="email">Enter email: </label>
     <input type="text" th:field="*{email}" id="email"/>
 
-
-    <br/>
     <br/>
 
-    <label for="password">Enter password : </label>
-    <input type="text" th:field="*{password}" id="password"/>
-
-
-    <br/>
-    <br/>
-
-    <label for="role">Enter role: </label>
-    <input type="text" th:field="*{roles}" id="role"/>
-
+    <label for="password">Enter password: </label>
+    <input type="password" th:field="*{password}" id="password"/>
 
     <br/>
 
+    <label for="roles">Select role: </label>
+    <select name="roles" id="roles" multiple="multiple">
+        <option th:each="role : ${allRoles}"
+                th:value="${role.id}"
+                th:text="${role.roleName}"></option>
+    </select>
 
+    <br/>
 
     <input type="submit" value="Create!"/>
 </form>
+<br/>
+<a href="/logout">Logout</a>
 
 </body>
 </html>

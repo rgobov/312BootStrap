@@ -24,14 +24,8 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
 
-
-
     @Autowired
     private final UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
 
     @Autowired
     @Lazy
@@ -82,6 +76,10 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Transactional
+    public User findByUserName(String userName) {
+        return userRepository.findByUserName(userName).get();
+    }
 
 
     }

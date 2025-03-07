@@ -1,17 +1,28 @@
 package com.example.security.spring_security.controller;
 
+import com.example.security.spring_security.model.Role;
 import com.example.security.spring_security.model.User;
+import com.example.security.spring_security.repositories.RoleRepository;
 import com.example.security.spring_security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Controller
 
 public class UserController {
-
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -21,24 +32,39 @@ public class UserController {
 
 
     @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.findAll());
         return "all_users";
     }
 
     @GetMapping("/new")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showFormAddUser(Model model) {
+        // Получаем все роли из базы данных
+        List<Role> allRoles = roleRepository.findAll();
+
+        // Передаем список ролей в модель
+        model.addAttribute("allRoles", allRoles);
+
+        // Передаем пустой объект User для формы
         model.addAttribute("user", new User());
-        return "add_user";
+
+        return "add_user"; // Имя Thymeleaf шаблона
     }
 
     @PostMapping(("/user"))
-    public String addUser(@ModelAttribute("user") User user) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public String addUser(@ModelAttribute("user") User user,@RequestParam("roles") Set<String> roleNames) {
+        Set<Role> roles = roleNames.stream()
+                .map(roleName -> new Role(roleName)) // Создаем объект Role
+                .collect(Collectors.toSet());
         userService.save(user);
         return "redirect:/admin";
     }
 
     @GetMapping("/show")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showUserById(@RequestParam("id") int id, Model model) {
         User user = userService.findById(id);
         if (user == null) {
@@ -50,26 +76,43 @@ public class UserController {
     }
 
     @GetMapping("edit")
+    @PreAuthorize("hasRole('ADMIN')")
     public String editUser(Model model, @RequestParam("id") int id) {
         model.addAttribute("user", userService.findById(id));
         return "edit_user";
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public String updateUser(@ModelAttribute("user") User user, @RequestParam("id") int id) {
         userService.update(id, user);
         return "redirect:/user";
     }
 
-    @PostMapping("/show/delete")
+    @PostMapping("/delete")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteUser(@ModelAttribute("user") User user, @RequestParam("id") int id) {
         userService.delete(id);
         return "redirect:/user";
     }
-//    @GetMapping("user/show")
-//    public String showUser(@RequestParam("id") Long id, Model model) {
-//        User user = userService.findById(id); // Метод для получения пользователя по ID
-//        model.addAttribute("user", user);
-//        return "show"; // Путь к шаблону (Thymeleaf)
-//    }
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String affterDelite(Model model) {
+        model.addAttribute("users", userService.findAll());
+        return "all_users";
+    }
+    @GetMapping("/ordinaruser")
+    public String ordinarUser(Model model) {
+        UserDetails userDetails =
+                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", userService.findByUserName(userDetails.getUsername()));
+        return "ordinar_user";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login"; // Имя шаблона (login.html)
+    }
 }
+
+

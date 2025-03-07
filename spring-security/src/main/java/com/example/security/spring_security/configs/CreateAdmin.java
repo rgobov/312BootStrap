@@ -1,4 +1,4 @@
-package com.example.security.spring_security.service;
+package com.example.security.spring_security.configs;
 
 import com.example.security.spring_security.model.Role;
 import com.example.security.spring_security.model.User;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+
 @Service
 public class CreateAdmin {
     private final UserRepository userRepository;
@@ -42,7 +43,6 @@ public class CreateAdmin {
                 passwordEncoder.encode("Yn"), // Кодирование пароля
                 userroles
         );
-
 
         userRepository.save(admin);
         userRepository.save(user);

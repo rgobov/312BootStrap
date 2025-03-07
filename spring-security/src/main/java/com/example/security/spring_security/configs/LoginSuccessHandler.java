@@ -1,4 +1,4 @@
-package com.example.security.spring_security.seurity;
+package com.example.security.spring_security.configs;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;  // Исправлено на jakarta
 import jakarta.servlet.http.HttpServletResponse; // Исправлено на jakarta
 import jakarta.servlet.ServletException;         // Исправлено на jakarta
+
 import java.io.IOException;
 import java.util.Collection;
 
@@ -33,7 +34,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (isAdmin) {
             response.sendRedirect("/admin");
         } else if (isUser) {
-            response.sendRedirect("/user");
+            response.sendRedirect("/ordinaruser");
         } else {
             // Если роль не определена, перенаправляем на страницу по умолчанию
             response.sendRedirect("/user");
