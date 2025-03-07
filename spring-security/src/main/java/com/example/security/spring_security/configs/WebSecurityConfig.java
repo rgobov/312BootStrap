@@ -26,6 +26,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
+                        .loginPage("/login")
                         .successHandler(loginSuccessHandler)
                         .permitAll()
                 )
