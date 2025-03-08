@@ -96,7 +96,14 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public String updateUser(@ModelAttribute("user") User user, @RequestParam("id") int id) {
         userService.update(id, user);
-        return "redirect:/user";
+        return "redirect:/affterUpdate?id=" + id;
+
+    }
+    @GetMapping("/affterUpdate")
+    public String affterUpdate(Model model, @RequestParam("id") int id) {
+        User user = userService.findById(id);
+        model.addAttribute("user", user);
+        return "selected_user"; // Return the view name
     }
 
     @PostMapping("/delete")
@@ -118,6 +125,7 @@ public class UserController {
         model.addAttribute("user", userService.findByUserName(userDetails.getUsername()));
         return "ordinar_user";
     }
+
 
     @GetMapping("/login")
     public String login() {

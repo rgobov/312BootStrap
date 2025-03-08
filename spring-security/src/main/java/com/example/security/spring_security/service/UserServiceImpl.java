@@ -60,9 +60,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void update(long id, User updateuser) {
         User userFromBase = findById(id);
-        userFromBase.setUserName(updateuser.getUserName());
+        //userFromBase.setUserName(updateuser.getUserName());
         userFromBase.setEmail(updateuser.getEmail());
         userFromBase.setPassword(bCryptPasswordEncoder.encode(updateuser.getPassword()));
+        userFromBase.setFirstName(updateuser.getFirstName());
+        userFromBase.setLastName(updateuser.getLastName());
+        userFromBase.setAge(updateuser.getAge());
+        userFromBase.setId(updateuser.getId());
         if (updateuser.getRoles() != null) {
             userFromBase.getRoles().clear(); // Очищаем текущие роли
             userFromBase.getRoles().addAll(updateuser.getRoles()); // Добавляем новые роли
