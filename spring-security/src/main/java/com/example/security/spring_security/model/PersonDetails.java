@@ -25,8 +25,13 @@ public class PersonDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserName(); // Предполагая, что User имеет метод getUsername()
+        return user.getEmail(); // Используем email вместо userName
     }
+
+    public long getId(){
+        return user.getId();
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {

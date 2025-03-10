@@ -33,14 +33,14 @@ public class CreateAdmin {
         // Кодируем пароль перед сохранением
         User admin = new User(
                 "Ivan",
-                "ivan@example.com",
-                passwordEncoder.encode("Ivan"), // Кодирование пароля
+                "admin@example.com",
+                passwordEncoder.encode("admin"), // Кодирование пароля
                 admninroles,32,"Ivan"
         );
         User user = new User(
                 "Yn",
-                "Yan@example.com",
-                passwordEncoder.encode("Yn"), // Кодирование пароля
+                "user@example.com",
+                passwordEncoder.encode("admin"), // Кодирование пароля
                 userroles, 50,"Yn"
         );
 

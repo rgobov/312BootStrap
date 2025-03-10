@@ -25,8 +25,22 @@
     <label for="password">Password </label>
     <input type="text" th:field="*{password}" id="password"/>
     <br/>
+    <label for="roles">Select role: </label>
+    <select name="roles" id="roles" multiple="multiple">
+        <option th:each="role : ${allRoles}"
+                th:value="${role.id}"
+                th:text="${role.roleName}"></option>
+    </select>
+    <br/>
     <input type="submit" value="Update"/>
-    <input type="submit" value="Update"/>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.value === '') {
+                passwordInput.disabled = true; // Отключаем поле, чтобы оно не было отправлено
+            }
+        });
+    </script>
 
 </form>
 <br/>

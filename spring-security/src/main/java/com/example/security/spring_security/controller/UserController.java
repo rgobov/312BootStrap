@@ -4,6 +4,7 @@ import com.example.security.spring_security.model.Role;
 import com.example.security.spring_security.model.User;
 import com.example.security.spring_security.repositories.RoleRepository;
 import com.example.security.spring_security.service.UserService;
+import com.example.security.spring_security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +20,14 @@ import java.util.stream.Collectors;
 @Controller
 
 public class UserController {
-    @Autowired
+
+    private final UserServiceImpl userServiceImpl;
     private RoleRepository roleRepository;
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleRepository roleRepository, UserServiceImpl userServiceImpl) {
         this.userService = userService;
+        this.roleRepository=roleRepository;
+        this.userServiceImpl = userServiceImpl;
     }
 
     private UserService userService;
@@ -55,15 +59,10 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public String addUser(
             @ModelAttribute("user") User user,
-            @RequestParam(value = "roles", required = false) Set<Integer> roleIds // Принимаем ID ролей
+            @RequestParam(value = "roles", required = false) Set<Long> roleIds // Принимаем ID ролей
     ) {
         if (roleIds != null && !roleIds.isEmpty()) {
-            Set<Role> roles = roleIds.stream()
-                    .map(id -> roleRepository.findById(Long.valueOf(id))) // Ищем роли по ID
-                    .filter(Optional::isPresent) // Отфильтровываем пустые Optional
-                    .map(Optional::get) // Извлекаем Role из Optional
-                    .collect(Collectors.toSet());
-            user.setRoles(roles); // Устанавливаем роли для пользователя
+           userService.setRolesForUser(user,roleIds);
         } else {
             user.setRoles(Set.of()); // Если роли не переданы, устанавливаем пустой набор
         }
@@ -88,7 +87,9 @@ public class UserController {
     @GetMapping("edit")
     @PreAuthorize("hasRole('ADMIN')")
     public String editUser(Model model, @RequestParam("id") int id) {
+        List<Role> allRoles = roleRepository.findAll();
         model.addAttribute("user", userService.findById(id));
+        model.addAttribute("allRoles", allRoles);
         return "edit_user";
     }
 
@@ -120,9 +121,8 @@ public class UserController {
     }
     @GetMapping("/user")
     public String ordinarUser(Model model) {
-        UserDetails userDetails =
-                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("user", userService.findByUserName(userDetails.getUsername()));
+        UserDetails userDetails = userService.getUserDetails();
+        model.addAttribute("user", userService.findByEmail(userDetails.getUsername())); // Используем findByEmail
         return "ordinar_user";
     }
 

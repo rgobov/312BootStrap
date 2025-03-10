@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,25 +16,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
+
     private final UserRepository userRepository;
 
-    @Autowired
+
     @Lazy
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    RoleRepository roleRepository;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+                           RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.roleRepository = roleRepository;
+
     }
 
     @Override
@@ -62,7 +68,6 @@ public class UserServiceImpl implements UserService {
         User userFromBase = findById(id);
         //userFromBase.setUserName(updateuser.getUserName());
         userFromBase.setEmail(updateuser.getEmail());
-        userFromBase.setPassword(bCryptPasswordEncoder.encode(updateuser.getPassword()));
         userFromBase.setFirstName(updateuser.getFirstName());
         userFromBase.setLastName(updateuser.getLastName());
         userFromBase.setAge(updateuser.getAge());
@@ -71,6 +76,9 @@ public class UserServiceImpl implements UserService {
             userFromBase.getRoles().clear(); // Очищаем текущие роли
             userFromBase.getRoles().addAll(updateuser.getRoles()); // Добавляем новые роли
         }
+        if (updateuser.getPassword() == null || updateuser.getPassword().isEmpty()) {
+            userFromBase.setPassword(userFromBase.getPassword());
+        }else userFromBase.setPassword(bCryptPasswordEncoder.encode(updateuser.getPassword()));
         userRepository.save(userFromBase);
     }
 
@@ -80,11 +88,31 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    @Transactional
-    public User findByUserName(String userName) {
-        return userRepository.findByUserName(userName).get();
+
+    public void setRolesForUser(User user, Set<Long> roleIds) {
+        Set<Role> roles = roleIds.stream()
+                .map(id -> roleRepository.findById(Long.valueOf(id))) // Ищем роли по ID
+                .filter(Optional::isPresent) // Отфильтровываем пустые Optional
+                .map(Optional::get) // Извлекаем Role из Optional
+                .collect(Collectors.toSet());
+        user.setRoles(roles); // Устанавливаем роли для пользователя
+    }
+
+    @Override
+    public UserDetails getUserDetails() {
+         return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @Transactional(readOnly = true)
+    public User findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElseThrow(() -> new UsernameNotFoundException("Пользователь с email " + email + " не найден"));
     }
 
 
+    Long getUserId(Long userId) {
+        return userRepository.findById(userId).get().getId();
     }
+
+}
 

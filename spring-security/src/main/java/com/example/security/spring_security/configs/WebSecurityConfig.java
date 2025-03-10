@@ -1,9 +1,11 @@
 package com.example.security.spring_security.configs;
 
+import com.example.security.spring_security.seurity.AuthProviderImpl;
 import com.example.security.spring_security.seurity.CustomsDetailsServise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
     @Autowired
-    LoginSuccessHandler loginSuccessHandler;
+    private LoginSuccessHandler loginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -27,6 +29,7 @@ public class WebSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .usernameParameter("email")
                         .successHandler(loginSuccessHandler)
                         .permitAll()
                 )
@@ -37,13 +40,19 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied")
                 )
+                .authenticationProvider(authenticationProvider())
                 .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    public AuthenticationProvider authenticationProvider() {
+        return new AuthProviderImpl(customsDetailsServise(), passwordEncoder());
+    }
+
+    @Bean
+    public CustomsDetailsServise customsDetailsServise() {
         return new CustomsDetailsServise();
     }
 
@@ -51,6 +60,4 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }
