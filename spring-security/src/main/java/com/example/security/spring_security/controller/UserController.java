@@ -18,20 +18,14 @@ import java.util.stream.Collectors;
 
 
 @Controller
-
 public class UserController {
 
-    private final UserServiceImpl userServiceImpl;
-    private RoleRepository roleRepository;
+    private final UserService userService;
+
     @Autowired
-    public UserController(UserService userService, RoleRepository roleRepository, UserServiceImpl userServiceImpl) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.roleRepository=roleRepository;
-        this.userServiceImpl = userServiceImpl;
     }
-
-    private UserService userService;
-
 
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
@@ -43,34 +37,23 @@ public class UserController {
     @GetMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
     public String showFormAddUser(Model model) {
-        // Получаем все роли из базы данных
-        List<Role> allRoles = roleRepository.findAll();
-
-        // Передаем список ролей в модель
-        model.addAttribute("allRoles", allRoles);
-
-        // Передаем пустой объект User для формы
+        model.addAttribute("allRoles", userService.getAllRoles());
         model.addAttribute("user", new User());
-
-        return "add_user"; // Имя Thymeleaf шаблона
+        return "add_user";
     }
 
     @PostMapping("/addUser")
     @PreAuthorize("hasRole('ADMIN')")
-    public String addUser(
-            @ModelAttribute("user") User user,
-            @RequestParam(value = "roles", required = false) Set<Long> roleIds // Принимаем ID ролей
-    ) {
+    public String addUser(@ModelAttribute("user") User user,
+                          @RequestParam(value = "roles", required = false) Set<Long> roleIds) {
         if (roleIds != null && !roleIds.isEmpty()) {
-           userService.setRolesForUser(user,roleIds);
+            userService.setRolesForUser(user, roleIds);
         } else {
-            user.setRoles(Set.of()); // Если роли не переданы, устанавливаем пустой набор
+            user.setRoles(Set.of());
         }
-
-        userService.save(user); // Сохраняем пользователя
-        return "redirect:/admin"; // Перенаправляем на страницу админа
+        userService.save(user);
+        return "redirect:/admin";
     }
-
 
     @GetMapping("/show")
     @PreAuthorize("hasRole('ADMIN')")
@@ -87,9 +70,8 @@ public class UserController {
     @GetMapping("edit")
     @PreAuthorize("hasRole('ADMIN')")
     public String editUser(Model model, @RequestParam("id") int id) {
-        List<Role> allRoles = roleRepository.findAll();
         model.addAttribute("user", userService.findById(id));
-        model.addAttribute("allRoles", allRoles);
+        model.addAttribute("allRoles", userService.getAllRoles());
         return "edit_user";
     }
 
@@ -98,13 +80,13 @@ public class UserController {
     public String updateUser(@ModelAttribute("user") User user, @RequestParam("id") int id) {
         userService.update(id, user);
         return "redirect:/affterUpdate?id=" + id;
-
     }
+
     @GetMapping("/affterUpdate")
     public String affterUpdate(Model model, @RequestParam("id") int id) {
         User user = userService.findById(id);
         model.addAttribute("user", user);
-        return "selected_user"; // Return the view name
+        return "selected_user";
     }
 
     @PostMapping("/delete")
@@ -113,24 +95,23 @@ public class UserController {
         userService.delete(id);
         return "redirect:/affterDelite";
     }
+
     @GetMapping("/affterDelite")
     @PreAuthorize("hasRole('ADMIN')")
     public String affterDelite(Model model) {
         model.addAttribute("users", userService.findAll());
         return "all_users";
     }
+
     @GetMapping("/user")
     public String ordinarUser(Model model) {
         UserDetails userDetails = userService.getUserDetails();
-        model.addAttribute("user", userService.findByEmail(userDetails.getUsername())); // Используем findByEmail
+        model.addAttribute("user", userService.findByEmail(userDetails.getUsername()));
         return "ordinar_user";
     }
 
-
     @GetMapping("/login")
     public String login() {
-        return "login"; // Имя шаблона (login.html)
+        return "login";
     }
 }
-
-
