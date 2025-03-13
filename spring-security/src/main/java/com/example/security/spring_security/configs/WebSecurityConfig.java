@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
     @Autowired
-    private LoginSuccessHandler loginSuccessHandler;
+    LoginSuccessHandler loginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,7 +24,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/error").permitAll()
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN","USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -40,7 +40,6 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied")
                 )
-                .authenticationProvider(authenticationProvider())
                 .csrf(csrf -> csrf.disable());
 
         return http.build();
@@ -60,4 +59,6 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }

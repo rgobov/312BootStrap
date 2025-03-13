@@ -40,7 +40,7 @@ public class CreateAdmin {
         User user = new User(
                 "Yn",
                 "user@mail.ru",
-                passwordEncoder.encode("admin"), // Кодирование пароля
+                passwordEncoder.encode("user"), // Кодирование пароля
                 userroles, 50,"Yn"
         );
 
