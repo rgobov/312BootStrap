@@ -72,19 +72,22 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void update(long id, User updateuser) {
         User userFromBase = findById(id);
-        //userFromBase.setUserName(updateuser.getUserName());
         userFromBase.setEmail(updateuser.getEmail());
         userFromBase.setFirstName(updateuser.getFirstName());
         userFromBase.setLastName(updateuser.getLastName());
         userFromBase.setAge(updateuser.getAge());
         userFromBase.setId(updateuser.getId());
         if (updateuser.getRoles() != null) {
-            userFromBase.getRoles().clear(); // Очищаем текущие роли
-            userFromBase.getRoles().addAll(updateuser.getRoles()); // Добавляем новые роли
+            userFromBase.getRoles().clear();
+            userFromBase.getRoles().addAll(updateuser.getRoles());
         }
-        if (updateuser.getPassword() == null || updateuser.getPassword().isEmpty()) {
-            userFromBase.setPassword(userFromBase.getPassword());
-        }else userFromBase.setPassword(bCryptPasswordEncoder.encode(updateuser.getPassword()));
+        // Обработка пароля
+        String newPassword = updateuser.getPassword();
+        if (newPassword != null && !newPassword.isEmpty() && !newPassword.equals(userFromBase.getPassword())) {
+            // Хешируем только если пароль новый и отличается от текущего хеша
+            userFromBase.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        }
+        // Если пароль пустой или не изменился, оставляем старый хеш
         userRepository.save(userFromBase);
     }
 
